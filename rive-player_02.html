@@ -1,34 +1,28 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <title>Rive Embed</title>
-  <script src="https://unpkg.com/@rive-app/webgl"></script>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background: transparent;
-    }
-    canvas {
-      width: 100vw;
-      height: 100vh;
-      display: block;
-    }
-  </style>
-</head>
-<body>
-  <canvas id="riveCanvas"></canvas>
+<script>
+  const canvas = document.getElementById("riveCanvas");
 
-  <script>
-    new rive.Rive({
-      src: "https://noinspirationnofun.github.io/files/Blitz.riv",
-      canvas: document.getElementById("riveCanvas"),
-      autoplay: true,
-      stateMachines: "State Machine 1", // <- Passe ggf. an
-      artboardName: "Artboard 1"        // <- Passe ggf. an
-    });
-  </script>
-</body>
-</html>
+  // Skalierung für Retina/HiDPI
+  function resizeCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    canvas.style.width = window.innerWidth + "px";
+    canvas.style.height = window.innerHeight + "px";
+  }
+
+  // Initiales Resizing + bei Fensteränderung
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+  // Rive starten
+  new rive.Rive({
+    src: "https://noinspirationnofun.github.io/files/Blitz.riv",
+    canvas: canvas,
+    autoplay: true,
+    stateMachines: "State Machine 1", // falls du eine hast
+    artboardName: "Artboard 1",       // anpassen, falls nötig
+    fit: rive.Fit.COVER,              // optional: wie Inhalt skaliert wird
+    onLoad: () => console.log("✅ Rive geladen!"),
+    onError: (e) => console.error("❌ Fehler:", e)
+  });
+</script>
