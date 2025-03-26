@@ -1,7 +1,7 @@
 <script>
   const canvas = document.getElementById("riveCanvas");
 
-  // Skalierung für Retina/HiDPI
+  // Retina-Canvas-Handling
   function resizeCanvas() {
     const dpr = window.devicePixelRatio || 1;
     canvas.width = window.innerWidth * dpr;
@@ -10,19 +10,34 @@
     canvas.style.height = window.innerHeight + "px";
   }
 
-  // Initiales Resizing + bei Fensteränderung
   resizeCanvas();
   window.addEventListener("resize", resizeCanvas);
 
+  let riveInstance;
+
   // Rive starten
-  new rive.Rive({
+  riveInstance = new rive.Rive({
     src: "https://noinspirationnofun.github.io/files/Blitz.riv",
     canvas: canvas,
     autoplay: true,
-    stateMachines: "State Machine 1", // falls du eine hast
-    artboardName: "Artboard 1",       // anpassen, falls nötig
-    fit: rive.Fit.COVER,              // optional: wie Inhalt skaliert wird
-    onLoad: () => console.log("✅ Rive geladen!"),
-    onError: (e) => console.error("❌ Fehler:", e)
+    stateMachines: "State Machine 1",
+    artboardName: "Blitz",
+    fit: rive.Fit.COVER,
+    onLoad: () => {
+      console.log("✅ Rive geladen");
+    },
+    onError: (err) => {
+      console.error("❌ Rive Fehler:", err);
+    }
+  });
+
+  // Klick-Interaktion
+  canvas.addEventListener("click", () => {
+    const inputs = riveInstance.stateMachineInputs("State Machine 1");
+    const toggle = inputs.find(i => i.name === "toggle");
+    if (toggle) {
+      toggle.fire();
+      console.log("⚡️ Trigger ausgelöst!");
+    }
   });
 </script>
