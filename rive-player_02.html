@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Rive Embed</title>
+  <script src="https://unpkg.com/@rive-app/webgl"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: transparent;
+    }
+    canvas {
+      width: 100vw;
+      height: 100vh;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="riveCanvas"></canvas>
+
+  <script>
+    new rive.Rive({
+      src: "https://noinspirationnofun.github.io/files/Blitz.riv",
+      canvas: document.getElementById("riveCanvas"),
+      autoplay: true,
+      stateMachines: "State Machine 1", // <- Passe ggf. an
+      artboardName: "Artboard 1"        // <- Passe ggf. an
+    });
+  </script>
+</body>
+</html>
