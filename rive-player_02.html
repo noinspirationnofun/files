@@ -5,19 +5,18 @@
   <title>Blitz mit Custom Cursor</title>
   <script src="https://unpkg.com/@rive-app/canvas"></script>
   <style>
-    html, body {
+    html, body, canvas {
       margin: 0;
       padding: 0;
       overflow: hidden;
       background: transparent;
       height: 100%;
-      cursor: none; /* Systemcursor ausblenden */
+      width: 100%;
+      cursor: none; /* ❗ Hier auf allen Ebenen */
     }
 
     canvas {
       display: block;
-      width: 100vw;
-      height: 100vh;
       position: relative;
       z-index: 1;
     }
@@ -28,7 +27,6 @@
       height: 32px;
       background: url('https://noinspirationnofun.github.io/files/Cursor.png') no-repeat center center;
       background-size: contain;
-      background-color: transparent;
       pointer-events: none;
       z-index: 999999;
       top: 0;
@@ -46,7 +44,7 @@
     const cursor = document.getElementById("custom-cursor");
     const offset = 16;
 
-    // Canvas Retina-optimiert skalieren
+    // Canvas Retina-Optimierung
     function resizeCanvas() {
       const dpr = window.devicePixelRatio || 1;
       const width = window.innerWidth;
@@ -60,7 +58,7 @@
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    // Custom Cursor bewegen
+    // Cursor-Tracking
     window.addEventListener("mousemove", (e) => {
       cursor.style.transform = `translate(${e.pageX - offset}px, ${e.pageY - offset}px)`;
       cursor.style.display = "block";
@@ -70,7 +68,7 @@
       cursor.style.display = "none";
     });
 
-    // Rive laden
+    // Rive-Setup
     const riveInstance = new rive.Rive({
       src: "https://noinspirationnofun.github.io/files/Blitz.riv",
       canvas: canvas,
@@ -82,7 +80,7 @@
       }
     });
 
-    // Click → Trigger auslösen
+    // Click-Trigger
     canvas.addEventListener("click", () => {
       const inputs = riveInstance.stateMachineInputs("State Machine 1");
       const trigger = inputs.find(i => i.name === "toggle");
@@ -92,7 +90,7 @@
       }
     });
 
-    // Hover → Boolean setzen (optional)
+    // Hover-Boolean setzen (optional)
     canvas.addEventListener("mousemove", () => {
       const inputs = riveInstance.stateMachineInputs("State Machine 1");
       const hover = inputs.find(i => i.name === "hovered");
