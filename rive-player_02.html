@@ -1,35 +1,40 @@
-<script>
-  const canvas = document.getElementById("riveCanvas");
+<body>
+  <canvas id="riveCanvas"></canvas>
 
-  function resizeCanvas() {
-    const dpr = window.devicePixelRatio || 1;
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-    canvas.style.width = width + "px";
-    canvas.style.height = height + "px";
-  }
+  <script src="https://unpkg.com/@rive-app/canvas"></script>
+  <script>
+    const canvas = document.getElementById("riveCanvas");
 
-  resizeCanvas();
-  window.addEventListener("resize", resizeCanvas);
-
-  const riveInstance = new rive.Rive({
-    src: "https://noinspirationnofun.github.io/files/Blitz.riv",
-    canvas: canvas,
-    autoplay: true,
-    stateMachines: "State Machine 1",
-    artboardName: "Blitz",
-    onLoad: () => {
-      console.log("✅ Rive geladen");
+    // Canvas an Pixeldichte anpassen (Retina etc.)
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
     }
-  });
 
-  canvas.addEventListener("click", () => {
-    const inputs = riveInstance.stateMachineInputs("State Machine 1");
-    const trigger = inputs.find(i => i.name === "toggle");
-    if (trigger) {
-      trigger.fire();
-    }
-  });
-</script>
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    const riveInstance = new rive.Rive({
+      src: "https://noinspirationnofun.github.io/files/Blitz.riv",
+      canvas: canvas,
+      autoplay: true,
+      stateMachines: "State Machine 1",
+      artboardName: "Blitz",
+      onLoad: () => console.log("✅ Rive geladen")
+    });
+
+    canvas.addEventListener("click", () => {
+      const inputs = riveInstance.stateMachineInputs("State Machine 1");
+      const trigger = inputs.find(i => i.name === "toggle");
+      if (trigger) {
+        trigger.fire();
+        console.log("⚡️ Trigger aktiviert");
+      }
+    });
+  </script>
+</body>
