@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Blitz mit Custom Cursor</title>
+  <title>Rive Blitz + Custom Cursor</title>
   <script src="https://unpkg.com/@rive-app/canvas"></script>
   <style>
     html, body {
@@ -19,16 +19,18 @@
       display: block;
       width: 100vw;
       height: 100vh;
-      z-index: 1;
       position: relative;
+      z-index: 1;
     }
 
     #custom-cursor {
       position: fixed;
       width: 32px;
       height: 32px;
-      background: url('https://noinspirationnofun.github.io/files/Cursor.png') no-repeat top left;
-      background-size: contain;
+      background: url('https://noinspirationnofun.github.io/files/Cursor.png') no-repeat center center;
+      background-size: 32px 32px;
+      background-repeat: no-repeat;
+      image-rendering: auto;
       pointer-events: none;
       z-index: 9999;
       top: 0;
@@ -45,7 +47,7 @@
     const canvas = document.getElementById("riveCanvas");
     const cursor = document.getElementById("custom-cursor");
 
-    const offsetX = 16;
+    const offsetX = 16; // Hälfte von 32px
     const offsetY = 16;
 
     let mouseX = 0;
@@ -63,6 +65,12 @@
       cursor.style.display = "none";
     });
 
+    window.addEventListener("mouseout", (e) => {
+      if (!e.relatedTarget || e.relatedTarget.nodeName === "HTML") {
+        cursor.style.display = "none";
+      }
+    });
+
     function animateCursor() {
       cursorX += (mouseX - cursorX) * 0.2;
       cursorY += (mouseY - cursorY) * 0.2;
@@ -73,6 +81,7 @@
 
     animateCursor();
 
+    // Rive Setup
     const riveInstance = new rive.Rive({
       src: "https://noinspirationnofun.github.io/files/Blitz.riv",
       canvas: canvas,
@@ -84,6 +93,7 @@
       }
     });
 
+    // Click Trigger
     canvas.addEventListener("click", () => {
       const inputs = riveInstance.stateMachineInputs("State Machine 1");
       const trigger = inputs.find(i => i.name === "toggle");
