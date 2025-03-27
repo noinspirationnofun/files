@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Blitz mit Custom Cursor</title>
+  <title>Blitz mit Smooth Cursor</title>
   <script src="https://unpkg.com/@rive-app/canvas"></script>
   <style>
     html, body, canvas {
@@ -12,7 +12,7 @@
       background: transparent;
       height: 100%;
       width: 100%;
-      cursor: none; /* ❗ Hier auf allen Ebenen */
+      cursor: none;
     }
 
     canvas {
@@ -31,7 +31,8 @@
       z-index: 999999;
       top: 0;
       left: 0;
-      transition: transform 0.1s ease-out;
+      transition: opacity 0.2s ease;
+      opacity: 1;
     }
   </style>
 </head>
@@ -44,7 +45,39 @@
     const cursor = document.getElementById("custom-cursor");
     const offset = 16;
 
-    // Canvas Retina-Optimierung
+    // === Cursor Bewegung mit Animation ===
+    let mouseX = 0;
+    let mouseY = 0;
+    let cursorX = 0;
+    let cursorY = 0;
+
+    window.addEventListener("mousemove", (e) => {
+      mouseX = e.pageX - offset;
+      mouseY = e.pageY - offset;
+      cursor.style.opacity = 1;
+    });
+
+    window.addEventListener("mouseleave", () => {
+      cursor.style.opacity = 0;
+    });
+
+    window.addEventListener("mouseout", (e) => {
+      if (!e.relatedTarget || e.relatedTarget.nodeName === "HTML") {
+        cursor.style.opacity = 0;
+      }
+    });
+
+    function animateCursor() {
+      // Easing-Bewegung
+      cursorX += (mouseX - cursorX) * 0.15;
+      cursorY += (mouseY - cursorY) * 0.15;
+      cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
+      requestAnimationFrame(animateCursor);
+    }
+
+    animateCursor();
+
+    // === Canvas Retina-Scaling ===
     function resizeCanvas() {
       const dpr = window.devicePixelRatio || 1;
       const width = window.innerWidth;
@@ -58,17 +91,7 @@
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    // Cursor-Tracking
-    window.addEventListener("mousemove", (e) => {
-      cursor.style.transform = `translate(${e.pageX - offset}px, ${e.pageY - offset}px)`;
-      cursor.style.display = "block";
-    });
-
-    window.addEventListener("mouseleave", () => {
-      cursor.style.display = "none";
-    });
-
-    // Rive-Setup
+    // === Rive Setup ===
     const riveInstance = new rive.Rive({
       src: "https://noinspirationnofun.github.io/files/Blitz.riv",
       canvas: canvas,
@@ -80,7 +103,7 @@
       }
     });
 
-    // Click-Trigger
+    // === Click Trigger ===
     canvas.addEventListener("click", () => {
       const inputs = riveInstance.stateMachineInputs("State Machine 1");
       const trigger = inputs.find(i => i.name === "toggle");
@@ -90,7 +113,7 @@
       }
     });
 
-    // Hover-Boolean setzen (optional)
+    // === Hover Input (optional) ===
     canvas.addEventListener("mousemove", () => {
       const inputs = riveInstance.stateMachineInputs("State Machine 1");
       const hover = inputs.find(i => i.name === "hovered");
