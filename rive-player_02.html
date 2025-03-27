@@ -25,8 +25,8 @@
 
     #custom-cursor {
       position: fixed;
-      width: 125px;
-      height: 123px;
+      width: 32px;
+      height: 32px;
       background: url('https://noinspirationnofun.github.io/files/Cursor.png') no-repeat top left;
       background-size: contain;
       pointer-events: none;
@@ -45,31 +45,24 @@
     const canvas = document.getElementById("riveCanvas");
     const cursor = document.getElementById("custom-cursor");
 
-    // Offset basierend auf deiner Cursor-Grafik
     const offsetX = 16;
-    const offsetY = 7;
+    const offsetY = 16;
 
-    // Zielposition der Maus
     let mouseX = 0;
     let mouseY = 0;
-
-    // Aktuelle Cursorposition (für smooth easing)
     let cursorX = 0;
     let cursorY = 0;
 
-    // Mausbewegung speichern
     document.addEventListener("mousemove", (e) => {
       mouseX = e.clientX - offsetX;
       mouseY = e.clientY - offsetY;
       cursor.style.display = "block";
     });
 
-    // Maus verlässt Seite
     document.addEventListener("mouseleave", () => {
       cursor.style.display = "none";
     });
 
-    // Animationsloop für smoothe Bewegung
     function animateCursor() {
       cursorX += (mouseX - cursorX) * 0.2;
       cursorY += (mouseY - cursorY) * 0.2;
@@ -80,7 +73,6 @@
 
     animateCursor();
 
-    // Rive Animation laden
     const riveInstance = new rive.Rive({
       src: "https://noinspirationnofun.github.io/files/Blitz.riv",
       canvas: canvas,
@@ -92,7 +84,6 @@
       }
     });
 
-    // Click Trigger
     canvas.addEventListener("click", () => {
       const inputs = riveInstance.stateMachineInputs("State Machine 1");
       const trigger = inputs.find(i => i.name === "toggle");
