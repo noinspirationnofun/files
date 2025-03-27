@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Blitz mit Cursor</title>
+  <title>Blitz mit Custom Cursor</title>
   <script src="https://unpkg.com/@rive-app/canvas"></script>
   <style>
     html, body {
@@ -11,21 +11,26 @@
       overflow: hidden;
       background: transparent;
       height: 100%;
+      cursor: none; /* Systemcursor ausblenden */
     }
+
     canvas {
       display: block;
       width: 100vw;
       height: 100vh;
+      position: relative;
+      z-index: 1;
     }
+
     #custom-cursor {
       position: fixed;
       width: 32px;
       height: 32px;
       background: url('https://noinspirationnofun.github.io/files/Cursor.png') no-repeat center center;
-      background-color: transparent;
       background-size: contain;
+      background-color: transparent;
       pointer-events: none;
-      z-index: 99999;
+      z-index: 999999;
       top: 0;
       left: 0;
       transition: transform 0.1s ease-out;
@@ -41,7 +46,7 @@
     const cursor = document.getElementById("custom-cursor");
     const offset = 16;
 
-    // Resize Canvas for Retina Displays
+    // Canvas Retina-optimiert skalieren
     function resizeCanvas() {
       const dpr = window.devicePixelRatio || 1;
       const width = window.innerWidth;
@@ -55,7 +60,7 @@
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    // Cursor Movement
+    // Custom Cursor bewegen
     window.addEventListener("mousemove", (e) => {
       cursor.style.transform = `translate(${e.pageX - offset}px, ${e.pageY - offset}px)`;
       cursor.style.display = "block";
@@ -65,7 +70,7 @@
       cursor.style.display = "none";
     });
 
-    // Rive Setup
+    // Rive laden
     const riveInstance = new rive.Rive({
       src: "https://noinspirationnofun.github.io/files/Blitz.riv",
       canvas: canvas,
@@ -77,7 +82,7 @@
       }
     });
 
-    // Click Trigger
+    // Click → Trigger auslösen
     canvas.addEventListener("click", () => {
       const inputs = riveInstance.stateMachineInputs("State Machine 1");
       const trigger = inputs.find(i => i.name === "toggle");
@@ -87,7 +92,7 @@
       }
     });
 
-    // Optional: Hover Input
+    // Hover → Boolean setzen (optional)
     canvas.addEventListener("mousemove", () => {
       const inputs = riveInstance.stateMachineInputs("State Machine 1");
       const hover = inputs.find(i => i.name === "hovered");
