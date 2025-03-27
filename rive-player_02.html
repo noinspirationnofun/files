@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Rive Blitz</title>
+  <title>Blitz</title>
   <script src="https://unpkg.com/@rive-app/canvas"></script>
   <style>
     html, body {
@@ -17,15 +17,30 @@
       width: 100vw;
       height: 100vh;
     }
+    #custom-cursor {
+      position: fixed;
+      width: 32px;
+      height: 32px;
+      background: url('https://i-p.rmcdn.net/6360211cbfbb5200351f3701/image.png') no-repeat center;
+      background-size: contain;
+      pointer-events: none;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      transition: transform 0.1s ease-out;
+    }
   </style>
 </head>
 <body>
   <canvas id="riveCanvas"></canvas>
+  <div id="custom-cursor"></div>
 
   <script>
     const canvas = document.getElementById("riveCanvas");
+    const cursor = document.getElementById("custom-cursor");
+    const offset = 16;
 
-    // Retina & Fenstergröße anpassen
+    // Retina-/HiDPI-kompatibel
     function resizeCanvas() {
       const dpr = window.devicePixelRatio || 1;
       const width = window.innerWidth;
@@ -39,9 +54,18 @@
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    let riveInstance;
+    // Cursor-Tracking
+    window.addEventListener("mousemove", (e) => {
+      cursor.style.transform = `translate(${e.pageX - offset}px, ${e.pageY - offset}px)`;
+      cursor.style.display = "block";
+    });
 
-    riveInstance = new rive.Rive({
+    window.addEventListener("mouseleave", () => {
+      cursor.style.display = "none";
+    });
+
+    // Rive Setup
+    const riveInstance = new rive.Rive({
       src: "https://noinspirationnofun.github.io/files/Blitz.riv",
       canvas: canvas,
       autoplay: true,
@@ -52,7 +76,7 @@
       }
     });
 
-    // Trigger bei Klick
+    // Click → Trigger
     canvas.addEventListener("click", () => {
       const inputs = riveInstance.stateMachineInputs("State Machine 1");
       const trigger = inputs.find(i => i.name === "toggle");
