@@ -17,19 +17,16 @@
 
   // Rive starten
   riveInstance = new rive.Rive({
-    src: "https://noinspirationnofun.github.io/files/Blitz.riv",
-    canvas: canvas,
-    autoplay: true,
-    stateMachines: "State Machine 1",
-    artboardName: "Blitz",
-    fit: rive.Fit.COVER,
-    onLoad: () => {
-      console.log("✅ Rive geladen");
-    },
-    onError: (err) => {
-      console.error("❌ Rive Fehler:", err);
-    }
-  });
+  src: "https://noinspirationnofun.github.io/files/Blitz.riv",
+  canvas: canvas,
+  autoplay: true,
+  artboardName: "Blitz",
+  stateMachines: "State Machine 1",
+  fit: rive.Fit.CONTAIN, // Wichtig: nicht verzerren!
+  onLoad: () => {
+    console.log("Rive ready");
+  }
+});
 
   // Klick-Interaktion
   canvas.addEventListener("click", () => {
