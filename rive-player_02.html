@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Blitz mit eingebautem Cursor</title>
+  <title>Blitz mit Custom Cursor</title>
   <script src="https://unpkg.com/@rive-app/canvas"></script>
   <style>
     html, body {
@@ -12,13 +12,15 @@
       background: transparent;
       height: 100%;
       width: 100%;
-      cursor: none; /* Systemcursor ausblenden */
+      cursor: none;
     }
 
     canvas {
       display: block;
       width: 100vw;
       height: 100vh;
+      z-index: 1;
+      position: relative;
     }
 
     #custom-cursor {
@@ -31,7 +33,7 @@
       z-index: 9999;
       top: 0;
       left: 0;
-      opacity: 1;
+      display: none;
     }
   </style>
 </head>
@@ -47,19 +49,38 @@
     const offsetX = 16;
     const offsetY = 7;
 
-    // Mausbewegung: Position direkt setzen
-    window.addEventListener("mousemove", (e) => {
-      cursor.style.left = `${e.clientX - offsetX}px`;
-      cursor.style.top = `${e.clientY - offsetY}px`;
+    // Zielposition der Maus
+    let mouseX = 0;
+    let mouseY = 0;
+
+    // Aktuelle Cursorposition (für smooth easing)
+    let cursorX = 0;
+    let cursorY = 0;
+
+    // Mausbewegung speichern
+    document.addEventListener("mousemove", (e) => {
+      mouseX = e.clientX - offsetX;
+      mouseY = e.clientY - offsetY;
       cursor.style.display = "block";
     });
 
-    // Cursor ausblenden wenn Maus aus Fenster
-    window.addEventListener("mouseleave", () => {
+    // Maus verlässt Seite
+    document.addEventListener("mouseleave", () => {
       cursor.style.display = "none";
     });
 
-    // Rive initialisieren
+    // Animationsloop für smoothe Bewegung
+    function animateCursor() {
+      cursorX += (mouseX - cursorX) * 0.2;
+      cursorY += (mouseY - cursorY) * 0.2;
+      cursor.style.left = `${cursorX}px`;
+      cursor.style.top = `${cursorY}px`;
+      requestAnimationFrame(animateCursor);
+    }
+
+    animateCursor();
+
+    // Rive Animation laden
     const riveInstance = new rive.Rive({
       src: "https://noinspirationnofun.github.io/files/Blitz.riv",
       canvas: canvas,
@@ -71,7 +92,7 @@
       }
     });
 
-    // Trigger bei Klick
+    // Click Trigger
     canvas.addEventListener("click", () => {
       const inputs = riveInstance.stateMachineInputs("State Machine 1");
       const trigger = inputs.find(i => i.name === "toggle");
