@@ -2,36 +2,35 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Blitz mit Smooth Cursor</title>
+  <title>Blitz mit eingebautem Cursor</title>
   <script src="https://unpkg.com/@rive-app/canvas"></script>
   <style>
-    html, body, canvas {
+    html, body {
       margin: 0;
       padding: 0;
       overflow: hidden;
       background: transparent;
       height: 100%;
       width: 100%;
-      cursor: none;
+      cursor: none; /* Systemcursor ausblenden */
     }
 
     canvas {
       display: block;
-      position: relative;
-      z-index: 1;
+      width: 100vw;
+      height: 100vh;
     }
 
     #custom-cursor {
       position: fixed;
-      width: 32px;
-      height: 32px;
-      background: url('https://noinspirationnofun.github.io/files/Cursor.png') no-repeat center center;
+      width: 125px;
+      height: 123px;
+      background: url('https://noinspirationnofun.github.io/files/Cursor.png') no-repeat top left;
       background-size: contain;
       pointer-events: none;
-      z-index: 999999;
+      z-index: 9999;
       top: 0;
       left: 0;
-      transition: opacity 0.2s ease;
       opacity: 1;
     }
   </style>
@@ -43,55 +42,24 @@
   <script>
     const canvas = document.getElementById("riveCanvas");
     const cursor = document.getElementById("custom-cursor");
-    const offset = 16;
 
-    // === Cursor Bewegung mit Animation ===
-    let mouseX = 0;
-    let mouseY = 0;
-    let cursorX = 0;
-    let cursorY = 0;
+    // Offset basierend auf deiner Cursor-Grafik
+    const offsetX = 16;
+    const offsetY = 7;
 
+    // Mausbewegung: Position direkt setzen
     window.addEventListener("mousemove", (e) => {
-      mouseX = e.pageX - offset;
-      mouseY = e.pageY - offset;
-      cursor.style.opacity = 1;
+      cursor.style.left = `${e.clientX - offsetX}px`;
+      cursor.style.top = `${e.clientY - offsetY}px`;
+      cursor.style.display = "block";
     });
 
+    // Cursor ausblenden wenn Maus aus Fenster
     window.addEventListener("mouseleave", () => {
-      cursor.style.opacity = 0;
+      cursor.style.display = "none";
     });
 
-    window.addEventListener("mouseout", (e) => {
-      if (!e.relatedTarget || e.relatedTarget.nodeName === "HTML") {
-        cursor.style.opacity = 0;
-      }
-    });
-
-    function animateCursor() {
-      // Easing-Bewegung
-      cursorX += (mouseX - cursorX) * 0.15;
-      cursorY += (mouseY - cursorY) * 0.15;
-      cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
-      requestAnimationFrame(animateCursor);
-    }
-
-    animateCursor();
-
-    // === Canvas Retina-Scaling ===
-    function resizeCanvas() {
-      const dpr = window.devicePixelRatio || 1;
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      canvas.style.width = width + "px";
-      canvas.style.height = height + "px";
-    }
-
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-
-    // === Rive Setup ===
+    // Rive initialisieren
     const riveInstance = new rive.Rive({
       src: "https://noinspirationnofun.github.io/files/Blitz.riv",
       canvas: canvas,
@@ -103,30 +71,13 @@
       }
     });
 
-    // === Click Trigger ===
+    // Trigger bei Klick
     canvas.addEventListener("click", () => {
       const inputs = riveInstance.stateMachineInputs("State Machine 1");
       const trigger = inputs.find(i => i.name === "toggle");
       if (trigger) {
         trigger.fire();
         console.log("⚡️ Trigger aktiviert");
-      }
-    });
-
-    // === Hover Input (optional) ===
-    canvas.addEventListener("mousemove", () => {
-      const inputs = riveInstance.stateMachineInputs("State Machine 1");
-      const hover = inputs.find(i => i.name === "hovered");
-      if (hover && hover.type === "boolean") {
-        hover.value = true;
-      }
-    });
-
-    canvas.addEventListener("mouseleave", () => {
-      const inputs = riveInstance.stateMachineInputs("State Machine 1");
-      const hover = inputs.find(i => i.name === "hovered");
-      if (hover && hover.type === "boolean") {
-        hover.value = false;
       }
     });
   </script>
